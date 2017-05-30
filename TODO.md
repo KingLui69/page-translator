@@ -1,9 +1,6 @@
-Add Bing Translate
+Add setting to only show the translate icon in address bar if the page was not in target language
 
-Settings page:
-- translate to language default (instead of hardcoded to English)
-- to switch between providers
-- only show the translate icon when the page is not in a particular language
+Create real icon for address bar
 
 Add context menu to translate page
 

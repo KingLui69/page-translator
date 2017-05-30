@@ -35,29 +35,57 @@ Page Translator functionality
 */
 
 function injectTranslatorCode() {
-    let googleTranslateBarCode = `
+    let googleCode = `
         let docBody = document.body;
-        let translateTo = 'en';
-        let translateFrom = '';
 
         if (docBody !== null) {
             let googleTranslateCallback = document.createElement('script');
-            googleTranslateCallback.innerHTML = "function googleTranslateElementInit(){ new google.translate.TranslateElement({ pageLanguage: '', defaultLanguage: 'en' }); }";
+            googleTranslateCallback.innerHTML = "function googleTranslateElementInit(){ new google.translate.TranslateElement(); }";
             docBody.insertBefore(googleTranslateCallback, docBody.firstChild);
 
             let googleTranslateScript = document.createElement('script');
-            googleTranslateScript.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit&tl=" + translateTo + "&sl=&hl=";
+            googleTranslateScript.charset="UTF-8";
+            googleTranslateScript.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit&tl=&sl=&hl=";
             docBody.insertBefore(googleTranslateScript, docBody.firstChild);
         }
 
-        // Firefox will (erroneously?) complain if non-structured-clonable data isn't returned.
+        // Firefox 53 will (erroneously?) complain if non-structured-clonable data isn't returned.
         // https://github.com/mdn/webextensions-examples/issues/193
         true;
     `;
 
-    browser.tabs.executeScript({
-        code: googleTranslateBarCode
-    });
+    let microsoftCode = `
+        let docBody = document.body;
+
+        if (docBody !== null) {
+            let div = '<div id="MicrosoftTranslatorWidget" class="Dark" style="color:white;background-color:#555555"></div>';
+            docBody.insertAdjacentHTML("afterbegin", div);
+
+            let microsoftTranslatorScript = document.createElement("script");
+            microsoftTranslatorScript.charset="UTF-8";
+            microsoftTranslatorScript.src = "https://ssl.microsofttranslator.com/ajax/v3/WidgetV3.ashx?siteData=ueOIGRSKkd965FeEGM5JtQ**&ctf=False&ui=true&settings=Auto&from=";
+            docBody.insertBefore(microsoftTranslatorScript, docBody.firstChild);
+        }
+
+        // Firefox 53 will (erroneously?) complain if non-structured-clonable data isn't returned.
+        // https://github.com/mdn/webextensions-examples/issues/193
+        true;
+    `;
+
+    let executeScript = function(option) {
+        let injectDetails = {};
+
+        if ((typeof option.translationService !== "undefined") &&
+            (option.translationService === "microsoft")) {
+            injectDetails.code = microsoftCode;
+        } else {
+            injectDetails.code = googleCode;
+        }
+
+        browser.tabs.executeScript(injectDetails);
+    };
+
+    browser.storage.local.get("translationService").then(executeScript);
 }
 
 
