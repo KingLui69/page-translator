@@ -4,17 +4,13 @@ function saveOptions() {
     });
 }
 
-function restoreOptions() {
-
-    function setCurrentChoice(option) {
-        if (option.translationService) {
-            document.querySelector("#translation-service").value = option.translationService;
-        }
-    }
-
+async function restoreOptions() {
     // Firefox 53 will erroneously complain that "ReferenceError: browser is not defined"
-    var getting = browser.storage.local.get("translationService");
-    getting.then(setCurrentChoice, console.error);
+    let option = await browser.storage.local.get("translationService");
+
+    if (option.translationService) {
+        document.querySelector("#translation-service").value = option.translationService;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
