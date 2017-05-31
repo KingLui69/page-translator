@@ -17,11 +17,70 @@ function protocolIsApplicable(url) {
     return APPLICABLE_PROTOCOLS.includes(anchor.protocol);
 }
 
+async function userAlwaysWantsIcon() {
+    let option = await browser.storage.local.get("alwaysShowPageAction");
+
+    if (typeof option.alwaysShowPageAction !== "boolean") {
+        return false;
+    } else {
+        return option.alwaysShowPageAction;
+    }
+}
+
+function pageIsInForeignLanguage() {
+    let pageLanguage = document.documentElement.lang;
+
+    // If we can't determine the page's language, assume it's foreign.
+    if (!pageLanguage) {
+        return true;
+    }
+
+    // Normalize page language and browser languages
+    pageLanguage = pageLanguage.toLowerCase();
+
+    let navigatorLanguages = navigator.languages.map(navigatorLanguage => {
+        return navigatorLanguage.toLowerCase();
+    });
+
+    // Check if the page's language explicitly matches any of browser's preferred languages
+    if (navigatorLanguages.includes(pageLanguage)) {
+        return false;
+    }
+
+    // If you're still here, then check for match of primary language subtags
+    // If so, assume close enough to native language.
+
+    // Get array of the primary languages from the browser, i.e. those without a hyphen
+    // Ex: `en` but not `en-SV`
+    let primaryLanguageSubtags = navigatorLanguages.filter(language => {
+        return language.indexOf('-') === -1;
+    });
+
+    // If no primary language subtag specified in browser, the user has explicitly removed it,
+    // so assume they want explicit language match instead of partial match.
+    if (primaryLanguageSubtags.length === 0) {
+        return true;
+    }
+
+    // Get page's language subtag 
+    let pageLanguageSubtag = pageLanguage.split('-', 1)[0];
+
+    // Look for primary language subtag match
+    if (primaryLanguageSubtags.includes(pageLanguageSubtag)) {
+        return false;
+    }
+
+    // No match, so page is in foreign language.
+    return true;
+}
+
 /*
 Show the Page Translator page action in the browser address bar, if applicable.
 */
 function initializePageAction(tab) {
-    if (protocolIsApplicable(tab.url)) {
+    if (protocolIsApplicable(tab.url) &&
+        (userAlwaysWantsIcon() || pageIsInForeignLanguage())
+    ) {
         browser.pageAction.show(tab.id);
     }
 }

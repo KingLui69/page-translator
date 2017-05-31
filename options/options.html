@@ -5,11 +5,19 @@
 </head>
 <body>
     <form>
-        <label for="translation-service">Translate using </label>
-        <select id="translation-service">
-            <option value="google">Google Translate</option>
-            <option value="microsoft">Microsoft Translator</option>
-        </select>
+        <div>
+            <label for="translation-service">Translate using </label>
+            <select id="translation-service">
+                <option value="google">Google Translate</option>
+                <option value="microsoft">Microsoft Translator</option>
+            </select>
+        </div>
+        <div>
+            <label>
+                <input id="always-show-page-action" type="checkbox" value="true" />
+                Always show translate icon in the URL bar
+            </label>
+        </div>
     </form>
     <script src="options.js"></script>
 </body>

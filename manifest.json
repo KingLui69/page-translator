@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "Page Translator",
-    "version": "0.0.2",
-    "description": "Translate any page with Google Translate or Bing Translate.",
+    "version": "0.0.3",
+    "description": "Translate any page using Google Translate or Microsoft Translator.",
     "homepage_url": "https://github.com/jeremiahlee/page-translator/",
     "icons": {
         "48": "icons/icon-48.png"
