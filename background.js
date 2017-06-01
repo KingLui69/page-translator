@@ -27,11 +27,16 @@ async function userAlwaysWantsIcon() {
     }
 }
 
-function pageIsInForeignLanguage() {
-    let pageLanguage = document.documentElement.lang;
+async function pageIsInForeignLanguage(tabId) {
+    // Get the page's language. If not found, assume it's foreign.
+    // Better to show the translate icon when it is not needed than vice versa
+    try {
+        var pageLanguage = await browser.tabs.detectLanguage(tabId.id);
+    } catch (err) {
+        return true;
+    }
 
-    // If we can't determine the page's language, assume it's foreign.
-    if (!pageLanguage) {
+    if (!pageLanguage || pageLanguage === "und") {
         return true;
     }
 
@@ -77,11 +82,13 @@ function pageIsInForeignLanguage() {
 /*
 Show the Page Translator page action in the browser address bar, if applicable.
 */
-function initializePageAction(tab) {
+async function initializePageAction(tab) {
     if (protocolIsApplicable(tab.url) &&
-        (userAlwaysWantsIcon() || pageIsInForeignLanguage())
+        (await userAlwaysWantsIcon() === true || await pageIsInForeignLanguage(tab) === true)
     ) {
         browser.pageAction.show(tab.id);
+    } else {
+        browser.pageAction.hide(tab.id);
     }
 }
 
@@ -168,7 +175,9 @@ browser.tabs.query({}).then((tabs) => {
 When a tab is updated, reset the page action for that tab.
 */
 browser.tabs.onUpdated.addListener((id, changeInfo, tab) => {
-    initializePageAction(tab);
+    if ((typeof changeInfo.status === "string") && (changeInfo.status === "complete")) {
+        initializePageAction(tab);
+    }
 });
 
 /*
