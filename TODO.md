@@ -1,15 +1,9 @@
-Add tests for language matching logic
-- page's language: missing, sv, sv-SV, en-SV, SV-SV, EN-SV
-- browser: en, en-US, sp, sp-US
-
-Create real icon for address bar
+Build step to only publish necessary code and license
 
 Add context menu to translate page
 
 If text selected, "Translate selected text" in context menu
 
-Internationalize UI text
-
-Build step to only publish necessary code and license
+Internationalize UI text, https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
 
 Style the options page to look like Firefox

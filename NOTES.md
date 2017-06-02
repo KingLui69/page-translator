@@ -98,3 +98,7 @@ function pageIsInForeignLanguage() {
     // No match, so page is in foreign language.
     return true;
 }
+
+Add tests for language matching logic
+- page's language: missing, sv, sv-SV, en-SV, SV-SV, EN-SV
+- browser: en, en-US, sp, sp-US

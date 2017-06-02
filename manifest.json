@@ -1,29 +1,34 @@
 {
     "manifest_version": 2,
     "name": "Page Translator",
-    "version": "0.0.6",
+    "version": "0.0.7",
+    "author": "Jeremiah Lee",
+    "developer": {
+        "name": "Jeremiah Lee",
+        "url": "https://jeremiahlee.com/"
+    },
     "description": "Translate any page using Google Translate or Microsoft Translator.",
     "homepage_url": "https://github.com/jeremiahlee/page-translator/",
     "icons": {
-        "48": "icons/icon-48.png"
+        "16": "icons/icon-16.png",
+        "32": "icons/icon-32.png",
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png",
+        "128": "icons/icon-128.png"
     },
-
     "permissions": [
         "activeTab",
         "storage",
         "tabs"
     ],
-
     "page_action": {
         "browser_style": true,
-        "default_icon": "icons/icon-38.png",
+        "default_icon": "icons/icon.svg",
         "default_title": "Translate"
     },
-
     "background": {
         "scripts": ["background.js"]
     },
-
     "options_ui": {
         "page": "options/options.html"
     }
