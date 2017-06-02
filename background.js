@@ -8,15 +8,16 @@ WebExtension specific functions
 
 /*
 Returns true only if the URL's protocol is in APPLICABLE_PROTOCOLS.
-Function source: https://github.com/mdn/webextensions-examples/blob/c5d69d15d6dcd9217a20725e7b69a084baedae03/apply-css/background.js
 */
-const APPLICABLE_PROTOCOLS = ['http:', 'https:'];
-function protocolIsApplicable(url) {
-    let anchor = document.createElement('a');
-    anchor.href = url;
-    return APPLICABLE_PROTOCOLS.includes(anchor.protocol);
+function protocolIsApplicable(tabUrl) {
+    const APPLICABLE_PROTOCOLS = ['http:', 'https:'];
+    let url = new URL(tabUrl);
+    return APPLICABLE_PROTOCOLS.includes(url.protocol);
 }
 
+/*
+Returns true if user set option to always display the page action
+*/
 async function userAlwaysWantsIcon() {
     let option = await browser.storage.local.get("alwaysShowPageAction");
 
@@ -31,7 +32,7 @@ async function pageIsInForeignLanguage(tabId) {
     // Get the page's language. If not found, assume it's foreign.
     // Better to show the translate icon when it is not needed than vice versa
     try {
-        var pageLanguage = await browser.tabs.detectLanguage(tabId.id);
+        var pageLanguage = await browser.tabs.detectLanguage(tabId);
     } catch (err) {
         return true;
     }
@@ -84,7 +85,7 @@ Show the Page Translator page action in the browser address bar, if applicable.
 */
 async function initializePageAction(tab) {
     if (protocolIsApplicable(tab.url) &&
-        (await userAlwaysWantsIcon() === true || await pageIsInForeignLanguage(tab) === true)
+        (await userAlwaysWantsIcon() === true || await pageIsInForeignLanguage(tab.id) === true)
     ) {
         browser.pageAction.show(tab.id);
     } else {
